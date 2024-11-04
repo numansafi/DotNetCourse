@@ -13,26 +13,37 @@ class Program
 
         IDbConnection dbConnection = new SqlConnection(connectionstring);
         
-        string sqlCommand = "SELECT GETDATE()";
-
-        DateTime dateTimeNow =  dbConnection.QuerySingle<DateTime>(sqlCommand);
-
-        Console.WriteLine($"Date: {dateTimeNow}");
-        
         var myComputer = new Computer()
         {
+            Motherboard = "26709",
             HasWifi = true,
             HasLte = false,
             ReleaseDate = DateTime.Now.AddDays(-200),
-            Price = 999.99m
+            Price = 999.99m,
+            VideoCard = "RTX 2060"
         };
-        
-        myComputer.HasWifi = false;
 
-        Console.WriteLine(myComputer.Motherboard);
-        Console.WriteLine(myComputer.HasWifi);
-        Console.WriteLine(myComputer.HasLte);
-        Console.WriteLine(myComputer.ReleaseDate);
-        Console.WriteLine(myComputer.Price);
+        /*string insertQuery = @"INSERT INTO TutorialAppSchema.Computer 
+                     (Motherboard, HasWifi, HasLte, ReleaseDate, Price, VideoCard) 
+                     VALUES (@Motherboard, @HasWifi, @HasLte, @ReleaseDate, @Price, @VideoCard)";
+        
+        int result = dbConnection.Execute(insertQuery, myComputer);
+
+        Console.WriteLine(result);*/
+        
+        string selectQuery = @"SELECT Computer.Motherboard, Computer.HasWifi, Computer.HasLte, Computer.ReleaseDate, Computer.Price, Computer.VideoCard FROM TutorialAppSchema.Computer";
+        IEnumerable<Computer> computers = dbConnection.Query<Computer>(selectQuery);
+
+        foreach (var computer in computers)
+        {
+            Console.WriteLine($"{nameof(computer.Motherboard)}: {computer.Motherboard}");
+            Console.WriteLine($"{nameof(computer.HasWifi)}: {computer.HasWifi}");
+            Console.WriteLine($"{nameof(computer.HasLte)}: {computer.HasLte}");
+            Console.WriteLine($"{nameof(computer.ReleaseDate)}: {computer.ReleaseDate}");
+            Console.WriteLine($"{nameof(computer.Price)}: {computer.Price}");
+            Console.WriteLine($"{nameof(computer.VideoCard)}: {computer.VideoCard}");
+        }
+
+
     }
 }
